@@ -81,6 +81,7 @@ class ZwaveWrapper(object):
         callbacks = {'poweron': self.cb_poweron,
                      'poweroff': self.cb_poweroff,
                      'custom': self.cb_custom,
+                     'dim': self.cb_dim,
                      'thermostat_setpoint': self.cb_thermostat}
         
         self.pluginapi = pluginapi.PluginAPI(self.id, self.PLUGIN_TYPE, **callbacks)
@@ -129,6 +130,18 @@ class ZwaveWrapper(object):
         node_id = int(node_id)
         d = defer.Deferred()
         self.manager.setNodeOff(self.home_id, node_id)
+        d.callback('done!')
+        return d
+    
+    def cb_dim(self, node_id, level):
+        '''
+        This function is called when a dim request has been received from the network.
+        @param node_id: the node_id to power off.
+        @param level: the dim level to set (int)
+        '''
+        node_id = int(node_id)
+        d = defer.Deferred()
+        self.manager.setNodeLevel(self.home_id, node_id, int(level))
         d.callback('done!')
         return d
     
